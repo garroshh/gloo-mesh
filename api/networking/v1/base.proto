@@ -37,3 +37,44 @@ message StringMatch {
   //If true, indicates the exact/prefix/suffix matching should be case insensitive. This has no effect for the regex match.
   bool ignore_case = 5;
 }
+
+// ObjectMeta is a simplified clone of the Kubernetes ObjectMeta used to represent object metadata
+// for Kubernetes objects passed as messages in the NetworkingExtensions API.
+message ObjectMeta {
+  // the Kubernetes name of the object
+  string name = 1;
+
+  // the Kubernetes namespace of the object
+  string namespace = 2;
+
+  // the Kubernetes clusterName of the object (used internally by Gloo Mesh)
+  string cluster_name = 3;
+
+  // the Kubernetes resourceVersion of the object
+  string resource_version = 4;
+
+  // the Kubernetes labels on the object
+  map<string,string> labels = 5;
+
+  // the Kubernetes annotations on the object
+  map<string,string> annotations = 6;
+}
+
+// Copy of Kubernetes ObjectMeta from https://github.com/kubernetes/apimachinery/blob/master/pkg/apis/meta/v1/generated.proto
+// TypeMeta describes an individual object in an API response or request
+// with strings representing the type of the object and its API schema version.
+// Structures that are versioned or persisted should inline TypeMeta.
+message TypeMeta {
+  // Kind is a string value representing the REST resource this object represents.
+  // Servers may infer this from the endpoint the client submits requests to.
+  // Cannot be updated.
+  // In CamelCase.
+  // More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  string kind = 1;
+
+  // APIVersion defines the versioned schema of this representation of an object.
+  // Servers should convert recognized schemas to the latest internal value, and
+  // may reject unrecognized values.
+  // More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  string apiVersion = 2;
+}

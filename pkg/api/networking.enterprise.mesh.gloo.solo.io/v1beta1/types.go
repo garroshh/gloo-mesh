@@ -4,9 +4,8 @@
 package v1beta1
 
 import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-)
+    metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+    "k8s.io/apimachinery/pkg/runtime/schema")
 
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -15,22 +14,22 @@ import (
 
 // GroupVersionKind for WasmDeployment
 var WasmDeploymentGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "WasmDeployment",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "WasmDeployment",
 }
 
 // WasmDeployment is the Schema for the wasmDeployment API
 type WasmDeployment struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   WasmDeploymentSpec   `json:"spec,omitempty"`
-	Status WasmDeploymentStatus `json:"status,omitempty"`
+    Spec WasmDeploymentSpec `json:"spec,omitempty"`
+    Status WasmDeploymentStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (WasmDeployment) GVK() schema.GroupVersionKind {
+func (WasmDeployment)  GVK() schema.GroupVersionKind {
 	return WasmDeploymentGVK
 }
 
@@ -38,9 +37,9 @@ func (WasmDeployment) GVK() schema.GroupVersionKind {
 
 // WasmDeploymentList contains a list of WasmDeployment
 type WasmDeploymentList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []WasmDeployment `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []WasmDeployment `json:"items"`
 }
 
 // +genclient
@@ -50,22 +49,22 @@ type WasmDeploymentList struct {
 
 // GroupVersionKind for VirtualDestination
 var VirtualDestinationGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "VirtualDestination",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "VirtualDestination",
 }
 
 // VirtualDestination is the Schema for the virtualDestination API
 type VirtualDestination struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VirtualDestinationSpec   `json:"spec,omitempty"`
-	Status VirtualDestinationStatus `json:"status,omitempty"`
+    Spec VirtualDestinationSpec `json:"spec,omitempty"`
+    Status VirtualDestinationStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (VirtualDestination) GVK() schema.GroupVersionKind {
+func (VirtualDestination)  GVK() schema.GroupVersionKind {
 	return VirtualDestinationGVK
 }
 
@@ -73,9 +72,9 @@ func (VirtualDestination) GVK() schema.GroupVersionKind {
 
 // VirtualDestinationList contains a list of VirtualDestination
 type VirtualDestinationList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []VirtualDestination `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []VirtualDestination `json:"items"`
 }
 
 // +genclient
@@ -85,22 +84,22 @@ type VirtualDestinationList struct {
 
 // GroupVersionKind for VirtualGateway
 var VirtualGatewayGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "VirtualGateway",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "VirtualGateway",
 }
 
 // VirtualGateway is the Schema for the virtualGateway API
 type VirtualGateway struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VirtualGatewaySpec   `json:"spec,omitempty"`
-	Status VirtualGatewayStatus `json:"status,omitempty"`
+    Spec VirtualGatewaySpec `json:"spec,omitempty"`
+    Status VirtualGatewayStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (VirtualGateway) GVK() schema.GroupVersionKind {
+func (VirtualGateway)  GVK() schema.GroupVersionKind {
 	return VirtualGatewayGVK
 }
 
@@ -108,9 +107,9 @@ func (VirtualGateway) GVK() schema.GroupVersionKind {
 
 // VirtualGatewayList contains a list of VirtualGateway
 type VirtualGatewayList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []VirtualGateway `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []VirtualGateway `json:"items"`
 }
 
 // +genclient
@@ -120,22 +119,22 @@ type VirtualGatewayList struct {
 
 // GroupVersionKind for VirtualHost
 var VirtualHostGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "VirtualHost",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "VirtualHost",
 }
 
 // VirtualHost is the Schema for the virtualHost API
 type VirtualHost struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   VirtualHostSpec   `json:"spec,omitempty"`
-	Status VirtualHostStatus `json:"status,omitempty"`
+    Spec VirtualHostSpec `json:"spec,omitempty"`
+    Status VirtualHostStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (VirtualHost) GVK() schema.GroupVersionKind {
+func (VirtualHost)  GVK() schema.GroupVersionKind {
 	return VirtualHostGVK
 }
 
@@ -143,9 +142,9 @@ func (VirtualHost) GVK() schema.GroupVersionKind {
 
 // VirtualHostList contains a list of VirtualHost
 type VirtualHostList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []VirtualHost `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []VirtualHost `json:"items"`
 }
 
 // +genclient
@@ -155,22 +154,22 @@ type VirtualHostList struct {
 
 // GroupVersionKind for RouteTable
 var RouteTableGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "RouteTable",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "RouteTable",
 }
 
 // RouteTable is the Schema for the routeTable API
 type RouteTable struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   RouteTableSpec   `json:"spec,omitempty"`
-	Status RouteTableStatus `json:"status,omitempty"`
+    Spec RouteTableSpec `json:"spec,omitempty"`
+    Status RouteTableStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (RouteTable) GVK() schema.GroupVersionKind {
+func (RouteTable)  GVK() schema.GroupVersionKind {
 	return RouteTableGVK
 }
 
@@ -178,9 +177,9 @@ func (RouteTable) GVK() schema.GroupVersionKind {
 
 // RouteTableList contains a list of RouteTable
 type RouteTableList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []RouteTable `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []RouteTable `json:"items"`
 }
 
 // +genclient
@@ -190,22 +189,22 @@ type RouteTableList struct {
 
 // GroupVersionKind for ServiceDependency
 var ServiceDependencyGVK = schema.GroupVersionKind{
-	Group:   "networking.enterprise.mesh.gloo.solo.io",
-	Version: "v1beta1",
-	Kind:    "ServiceDependency",
+    Group: "networking.enterprise.mesh.gloo.solo.io",
+    Version: "v1beta1",
+    Kind: "ServiceDependency",
 }
 
 // ServiceDependency is the Schema for the serviceDependency API
 type ServiceDependency struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+    metav1.TypeMeta   `json:",inline"`
+    metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ServiceDependencySpec   `json:"spec,omitempty"`
-	Status ServiceDependencyStatus `json:"status,omitempty"`
+    Spec ServiceDependencySpec `json:"spec,omitempty"`
+    Status ServiceDependencyStatus `json:"status,omitempty"`
 }
 
 // GVK returns the GroupVersionKind associated with the resource type.
-func (ServiceDependency) GVK() schema.GroupVersionKind {
+func (ServiceDependency)  GVK() schema.GroupVersionKind {
 	return ServiceDependencyGVK
 }
 
@@ -213,16 +212,16 @@ func (ServiceDependency) GVK() schema.GroupVersionKind {
 
 // ServiceDependencyList contains a list of ServiceDependency
 type ServiceDependencyList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ServiceDependency `json:"items"`
+    metav1.TypeMeta `json:",inline"`
+    metav1.ListMeta `json:"metadata,omitempty"`
+    Items           []ServiceDependency `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&WasmDeployment{}, &WasmDeploymentList{})
-	SchemeBuilder.Register(&VirtualDestination{}, &VirtualDestinationList{})
-	SchemeBuilder.Register(&VirtualGateway{}, &VirtualGatewayList{})
-	SchemeBuilder.Register(&VirtualHost{}, &VirtualHostList{})
-	SchemeBuilder.Register(&RouteTable{}, &RouteTableList{})
-	SchemeBuilder.Register(&ServiceDependency{}, &ServiceDependencyList{})
+    SchemeBuilder.Register(&WasmDeployment{}, &WasmDeploymentList{})
+    SchemeBuilder.Register(&VirtualDestination{}, &VirtualDestinationList{})
+    SchemeBuilder.Register(&VirtualGateway{}, &VirtualGatewayList{})
+    SchemeBuilder.Register(&VirtualHost{}, &VirtualHostList{})
+    SchemeBuilder.Register(&RouteTable{}, &RouteTableList{})
+    SchemeBuilder.Register(&ServiceDependency{}, &ServiceDependencyList{})
 }

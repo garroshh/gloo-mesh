@@ -9,6 +9,7 @@ import "extproto/ext.proto";
 option (extproto.equal_all) = true;
 
 import "github.com/solo-io/skv2/api/core/v1/core.proto";
+import "github.com/solo-io/gloo-mesh/api/networking/v1/base.proto";
 
 // disable OpenAPI validation schema for this file as Cue is incompatible with recursive types (https://github.com/cuelang/cue/issues/915)
 option (core.skv2.solo.io.disable_openapi_validation_schema) = true;
@@ -44,7 +45,7 @@ message Ratelimit {
         // descriptors used by the rate-limit service for rate-limiting. Configure rate-limit *descriptors* and
         // their associated limits on the Gloo settings.
         // Only one of `ratelimit` or `rate_limit_configs` can be set.
-//        RateLimitVhostExtension ratelimit = 2;
+        RateLimitVhostExtension ratelimit = 2;
 
         // References to RateLimitConfig resources. This is used to configure the GlooE rate limit server.
         // Only one of `ratelimit` or `rate_limit_configs` can be set.
@@ -62,6 +63,14 @@ message RatelimitConfig {
   Descriptor descriptors = 2;
   SetDescriptor set_descriptors = 3;
 
+}
+
+// completely encapsulate the rate limit configuration for both server and client
+message RatelimitConfigComplete {
+  .networking.mesh.gloo.solo.io.TypeMeta type_meta = 1;
+  .networking.mesh.gloo.solo.io.ObjectMeta object_meta = 2;
+  RateLimitConfigSpec spec = 3;
+  RateLimitConfigStatus status = 4;
 }
 
 // Copied from Gloo Edge: https://github.com/solo-io/gloo/blob/cfa3c17ab2552a594966da9aaad3f7c8b9678b7c/projects/gloo/api/v1/enterprise/options/ratelimit/ratelimit.proto
@@ -168,10 +177,10 @@ message RateLimitConfigSpec {
 //  // Each `RateLimitConfig` is an instance of one specific configuration type.
 //  // Currently, only raw configuration is supported, but going forward we are planning on adding
 //  // more high-level configuration formats to support specific use cases.
-//  oneof config_type {
-//    // Define a policy using the raw configuration format used by the server and the client (Envoy).
-//    Raw raw = 1;
-//  }
+  oneof config_type {
+    // Define a policy using the raw configuration format used by the server and the client (Envoy).
+    Raw raw = 1;
+  }
 }
 
 // The current status of the `RateLimitConfig`.
@@ -230,7 +239,7 @@ message Descriptor {
 
   // TODO: add inline annotation to fix recursive proto
   // Nested descriptors.
-    repeated Descriptor descriptors = 4;
+//    repeated Descriptor descriptors = 4;
 
   // Each top-level Descriptor defines a new Rate Limit "rule". When a request comes in, rate limit
   // actions are applied to the request to generate descriptor tuples that are sent to the rate limit

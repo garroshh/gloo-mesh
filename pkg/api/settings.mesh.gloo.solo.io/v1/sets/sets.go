@@ -4,431 +4,435 @@
 
 package v1sets
 
-import (
-	settings_mesh_gloo_solo_io_v1 "github.com/solo-io/gloo-mesh/pkg/api/settings.mesh.gloo.solo.io/v1"
 
-	"github.com/rotisserie/eris"
-	sksets "github.com/solo-io/skv2/contrib/pkg/sets"
-	"github.com/solo-io/skv2/pkg/ezkube"
-	"k8s.io/apimachinery/pkg/util/sets"
+
+import (
+    settings_mesh_gloo_solo_io_v1 "github.com/solo-io/gloo-mesh/pkg/api/settings.mesh.gloo.solo.io/v1"
+
+    "github.com/rotisserie/eris"
+    sksets "github.com/solo-io/skv2/contrib/pkg/sets"
+    "github.com/solo-io/skv2/pkg/ezkube"
+    "k8s.io/apimachinery/pkg/util/sets"
 )
 
 type SettingsSet interface {
 	// Get the set stored keys
-	Keys() sets.String
-	// List of resources stored in the set. Pass an optional filter function to filter on the list.
-	List(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings
-	// Unsorted list of resources stored in the set. Pass an optional filter function to filter on the list.
-	UnsortedList(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings
-	// Return the Set as a map of key to resource.
-	Map() map[string]*settings_mesh_gloo_solo_io_v1.Settings
-	// Insert a resource into the set.
-	Insert(settings ...*settings_mesh_gloo_solo_io_v1.Settings)
-	// Compare the equality of the keys in two sets (not the resources themselves)
-	Equal(settingsSet SettingsSet) bool
-	// Check if the set contains a key matching the resource (not the resource itself)
-	Has(settings ezkube.ResourceId) bool
-	// Delete the key matching the resource
-	Delete(settings ezkube.ResourceId)
-	// Return the union with the provided set
-	Union(set SettingsSet) SettingsSet
-	// Return the difference with the provided set
-	Difference(set SettingsSet) SettingsSet
-	// Return the intersection with the provided set
-	Intersection(set SettingsSet) SettingsSet
-	// Find the resource with the given ID
-	Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Settings, error)
-	// Get the length of the set
-	Length() int
-	// returns the generic implementation of the set
-	Generic() sksets.ResourceSet
-	// returns the delta between this and and another SettingsSet
-	Delta(newSet SettingsSet) sksets.ResourceDelta
+    Keys() sets.String
+    // List of resources stored in the set. Pass an optional filter function to filter on the list.
+    List(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings
+    // Unsorted list of resources stored in the set. Pass an optional filter function to filter on the list.
+    UnsortedList(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings
+    // Return the Set as a map of key to resource.
+    Map() map[string]*settings_mesh_gloo_solo_io_v1.Settings
+    // Insert a resource into the set.
+    Insert(settings ...*settings_mesh_gloo_solo_io_v1.Settings)
+    // Compare the equality of the keys in two sets (not the resources themselves)
+    Equal(settingsSet SettingsSet) bool
+    // Check if the set contains a key matching the resource (not the resource itself)
+    Has(settings ezkube.ResourceId) bool
+    // Delete the key matching the resource
+    Delete(settings  ezkube.ResourceId)
+    // Return the union with the provided set
+    Union(set SettingsSet) SettingsSet
+    // Return the difference with the provided set
+    Difference(set SettingsSet) SettingsSet
+    // Return the intersection with the provided set
+    Intersection(set SettingsSet) SettingsSet
+    // Find the resource with the given ID
+    Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Settings, error)
+    // Get the length of the set
+    Length() int
+    // returns the generic implementation of the set
+    Generic() sksets.ResourceSet
+    // returns the delta between this and and another SettingsSet
+    Delta(newSet SettingsSet) sksets.ResourceDelta
 }
 
 func makeGenericSettingsSet(settingsList []*settings_mesh_gloo_solo_io_v1.Settings) sksets.ResourceSet {
-	var genericResources []ezkube.ResourceId
-	for _, obj := range settingsList {
-		genericResources = append(genericResources, obj)
-	}
-	return sksets.NewResourceSet(genericResources...)
+    var genericResources []ezkube.ResourceId
+    for _, obj := range settingsList {
+        genericResources = append(genericResources, obj)
+    }
+    return sksets.NewResourceSet(genericResources...)
 }
 
 type settingsSet struct {
-	set sksets.ResourceSet
+    set sksets.ResourceSet
 }
 
 func NewSettingsSet(settingsList ...*settings_mesh_gloo_solo_io_v1.Settings) SettingsSet {
-	return &settingsSet{set: makeGenericSettingsSet(settingsList)}
+    return &settingsSet{set: makeGenericSettingsSet(settingsList)}
 }
 
 func NewSettingsSetFromList(settingsList *settings_mesh_gloo_solo_io_v1.SettingsList) SettingsSet {
-	list := make([]*settings_mesh_gloo_solo_io_v1.Settings, 0, len(settingsList.Items))
-	for idx := range settingsList.Items {
-		list = append(list, &settingsList.Items[idx])
-	}
-	return &settingsSet{set: makeGenericSettingsSet(list)}
+    list := make([]*settings_mesh_gloo_solo_io_v1.Settings, 0, len(settingsList.Items))
+    for idx := range settingsList.Items {
+        list = append(list, &settingsList.Items[idx])
+    }
+    return &settingsSet{set: makeGenericSettingsSet(list)}
 }
 
 func (s *settingsSet) Keys() sets.String {
 	if s == nil {
 		return sets.String{}
-	}
-	return s.Generic().Keys()
+    }
+    return s.Generic().Keys()
 }
 
-func (s *settingsSet) List(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings {
-	if s == nil {
-		return nil
-	}
-	var genericFilters []func(ezkube.ResourceId) bool
-	for _, filter := range filterResource {
-		genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
-			return filter(obj.(*settings_mesh_gloo_solo_io_v1.Settings))
-		})
-	}
+func (s *settingsSet) List(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings {
+    if s == nil {
+        return nil
+    }
+    var genericFilters []func(ezkube.ResourceId) bool
+    for _, filter := range filterResource {
+        genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
+            return filter(obj.(*settings_mesh_gloo_solo_io_v1.Settings))
+        })
+    }
 
-	objs := s.Generic().List(genericFilters...)
-	settingsList := make([]*settings_mesh_gloo_solo_io_v1.Settings, 0, len(objs))
-	for _, obj := range objs {
-		settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
-	}
-	return settingsList
+    objs := s.Generic().List(genericFilters...)
+    settingsList := make([]*settings_mesh_gloo_solo_io_v1.Settings, 0, len(objs))
+    for _, obj := range objs {
+        settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
+    }
+    return settingsList
 }
 
-func (s *settingsSet) UnsortedList(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings {
-	if s == nil {
-		return nil
-	}
-	var genericFilters []func(ezkube.ResourceId) bool
-	for _, filter := range filterResource {
-		genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
-			return filter(obj.(*settings_mesh_gloo_solo_io_v1.Settings))
-		})
-	}
+func (s *settingsSet) UnsortedList(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Settings) bool) []*settings_mesh_gloo_solo_io_v1.Settings {
+    if s == nil {
+        return nil
+    }
+    var genericFilters []func(ezkube.ResourceId) bool
+    for _, filter := range filterResource {
+        genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
+            return filter(obj.(*settings_mesh_gloo_solo_io_v1.Settings))
+        })
+    }
 
-	var settingsList []*settings_mesh_gloo_solo_io_v1.Settings
-	for _, obj := range s.Generic().UnsortedList(genericFilters...) {
-		settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
-	}
-	return settingsList
+    var settingsList []*settings_mesh_gloo_solo_io_v1.Settings
+    for _, obj := range s.Generic().UnsortedList(genericFilters...) {
+        settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
+    }
+    return settingsList
 }
 
 func (s *settingsSet) Map() map[string]*settings_mesh_gloo_solo_io_v1.Settings {
-	if s == nil {
-		return nil
-	}
+    if s == nil {
+        return nil
+    }
 
-	newMap := map[string]*settings_mesh_gloo_solo_io_v1.Settings{}
-	for k, v := range s.Generic().Map() {
-		newMap[k] = v.(*settings_mesh_gloo_solo_io_v1.Settings)
-	}
-	return newMap
+    newMap := map[string]*settings_mesh_gloo_solo_io_v1.Settings{}
+    for k, v := range s.Generic().Map() {
+        newMap[k] = v.(*settings_mesh_gloo_solo_io_v1.Settings)
+    }
+    return newMap
 }
 
 func (s *settingsSet) Insert(
-	settingsList ...*settings_mesh_gloo_solo_io_v1.Settings,
+        settingsList ...*settings_mesh_gloo_solo_io_v1.Settings,
 ) {
-	if s == nil {
-		panic("cannot insert into nil set")
-	}
+    if s == nil {
+        panic("cannot insert into nil set")
+    }
 
-	for _, obj := range settingsList {
-		s.Generic().Insert(obj)
-	}
+    for _, obj := range settingsList {
+        s.Generic().Insert(obj)
+    }
 }
 
 func (s *settingsSet) Has(settings ezkube.ResourceId) bool {
-	if s == nil {
-		return false
-	}
-	return s.Generic().Has(settings)
+    if s == nil {
+        return false
+    }
+    return s.Generic().Has(settings)
 }
 
 func (s *settingsSet) Equal(
-	settingsSet SettingsSet,
+        settingsSet SettingsSet,
 ) bool {
-	if s == nil {
-		return settingsSet == nil
-	}
-	return s.Generic().Equal(settingsSet.Generic())
+    if s == nil {
+        return settingsSet == nil
+    }
+    return s.Generic().Equal(settingsSet.Generic())
 }
 
 func (s *settingsSet) Delete(Settings ezkube.ResourceId) {
-	if s == nil {
-		return
-	}
-	s.Generic().Delete(Settings)
+    if s == nil {
+        return
+    }
+    s.Generic().Delete(Settings)
 }
 
 func (s *settingsSet) Union(set SettingsSet) SettingsSet {
-	if s == nil {
-		return set
-	}
-	return NewSettingsSet(append(s.List(), set.List()...)...)
+    if s == nil {
+        return set
+    }
+    return NewSettingsSet(append(s.List(), set.List()...)...)
 }
 
 func (s *settingsSet) Difference(set SettingsSet) SettingsSet {
-	if s == nil {
-		return set
-	}
-	newSet := s.Generic().Difference(set.Generic())
-	return &settingsSet{set: newSet}
+    if s == nil {
+        return set
+    }
+    newSet := s.Generic().Difference(set.Generic())
+    return &settingsSet{set: newSet}
 }
 
 func (s *settingsSet) Intersection(set SettingsSet) SettingsSet {
-	if s == nil {
-		return nil
-	}
-	newSet := s.Generic().Intersection(set.Generic())
-	var settingsList []*settings_mesh_gloo_solo_io_v1.Settings
-	for _, obj := range newSet.List() {
-		settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
-	}
-	return NewSettingsSet(settingsList...)
+    if s == nil {
+        return nil
+    }
+    newSet := s.Generic().Intersection(set.Generic())
+    var settingsList []*settings_mesh_gloo_solo_io_v1.Settings
+    for _, obj := range newSet.List() {
+        settingsList = append(settingsList, obj.(*settings_mesh_gloo_solo_io_v1.Settings))
+    }
+    return NewSettingsSet(settingsList...)
 }
 
+
 func (s *settingsSet) Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Settings, error) {
-	if s == nil {
-		return nil, eris.Errorf("empty set, cannot find Settings %v", sksets.Key(id))
-	}
+    if s == nil {
+        return nil, eris.Errorf("empty set, cannot find Settings %v", sksets.Key(id))
+    }
 	obj, err := s.Generic().Find(&settings_mesh_gloo_solo_io_v1.Settings{}, id)
 	if err != nil {
 		return nil, err
-	}
+    }
 
-	return obj.(*settings_mesh_gloo_solo_io_v1.Settings), nil
+    return obj.(*settings_mesh_gloo_solo_io_v1.Settings), nil
 }
 
 func (s *settingsSet) Length() int {
-	if s == nil {
-		return 0
-	}
-	return s.Generic().Length()
+    if s == nil {
+        return 0
+    }
+    return s.Generic().Length()
 }
 
 func (s *settingsSet) Generic() sksets.ResourceSet {
-	if s == nil {
-		return nil
-	}
-	return s.set
+    if s == nil {
+        return nil
+    }
+    return s.set
 }
 
 func (s *settingsSet) Delta(newSet SettingsSet) sksets.ResourceDelta {
-	if s == nil {
-		return sksets.ResourceDelta{
-			Inserted: newSet.Generic(),
-		}
-	}
-	return s.Generic().Delta(newSet.Generic())
+    if s == nil {
+        return sksets.ResourceDelta{
+            Inserted: newSet.Generic(),
+        }
+    }
+    return s.Generic().Delta(newSet.Generic())
 }
 
 type DashboardSet interface {
 	// Get the set stored keys
-	Keys() sets.String
-	// List of resources stored in the set. Pass an optional filter function to filter on the list.
-	List(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard
-	// Unsorted list of resources stored in the set. Pass an optional filter function to filter on the list.
-	UnsortedList(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard
-	// Return the Set as a map of key to resource.
-	Map() map[string]*settings_mesh_gloo_solo_io_v1.Dashboard
-	// Insert a resource into the set.
-	Insert(dashboard ...*settings_mesh_gloo_solo_io_v1.Dashboard)
-	// Compare the equality of the keys in two sets (not the resources themselves)
-	Equal(dashboardSet DashboardSet) bool
-	// Check if the set contains a key matching the resource (not the resource itself)
-	Has(dashboard ezkube.ResourceId) bool
-	// Delete the key matching the resource
-	Delete(dashboard ezkube.ResourceId)
-	// Return the union with the provided set
-	Union(set DashboardSet) DashboardSet
-	// Return the difference with the provided set
-	Difference(set DashboardSet) DashboardSet
-	// Return the intersection with the provided set
-	Intersection(set DashboardSet) DashboardSet
-	// Find the resource with the given ID
-	Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Dashboard, error)
-	// Get the length of the set
-	Length() int
-	// returns the generic implementation of the set
-	Generic() sksets.ResourceSet
-	// returns the delta between this and and another DashboardSet
-	Delta(newSet DashboardSet) sksets.ResourceDelta
+    Keys() sets.String
+    // List of resources stored in the set. Pass an optional filter function to filter on the list.
+    List(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard
+    // Unsorted list of resources stored in the set. Pass an optional filter function to filter on the list.
+    UnsortedList(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard
+    // Return the Set as a map of key to resource.
+    Map() map[string]*settings_mesh_gloo_solo_io_v1.Dashboard
+    // Insert a resource into the set.
+    Insert(dashboard ...*settings_mesh_gloo_solo_io_v1.Dashboard)
+    // Compare the equality of the keys in two sets (not the resources themselves)
+    Equal(dashboardSet DashboardSet) bool
+    // Check if the set contains a key matching the resource (not the resource itself)
+    Has(dashboard ezkube.ResourceId) bool
+    // Delete the key matching the resource
+    Delete(dashboard  ezkube.ResourceId)
+    // Return the union with the provided set
+    Union(set DashboardSet) DashboardSet
+    // Return the difference with the provided set
+    Difference(set DashboardSet) DashboardSet
+    // Return the intersection with the provided set
+    Intersection(set DashboardSet) DashboardSet
+    // Find the resource with the given ID
+    Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Dashboard, error)
+    // Get the length of the set
+    Length() int
+    // returns the generic implementation of the set
+    Generic() sksets.ResourceSet
+    // returns the delta between this and and another DashboardSet
+    Delta(newSet DashboardSet) sksets.ResourceDelta
 }
 
 func makeGenericDashboardSet(dashboardList []*settings_mesh_gloo_solo_io_v1.Dashboard) sksets.ResourceSet {
-	var genericResources []ezkube.ResourceId
-	for _, obj := range dashboardList {
-		genericResources = append(genericResources, obj)
-	}
-	return sksets.NewResourceSet(genericResources...)
+    var genericResources []ezkube.ResourceId
+    for _, obj := range dashboardList {
+        genericResources = append(genericResources, obj)
+    }
+    return sksets.NewResourceSet(genericResources...)
 }
 
 type dashboardSet struct {
-	set sksets.ResourceSet
+    set sksets.ResourceSet
 }
 
 func NewDashboardSet(dashboardList ...*settings_mesh_gloo_solo_io_v1.Dashboard) DashboardSet {
-	return &dashboardSet{set: makeGenericDashboardSet(dashboardList)}
+    return &dashboardSet{set: makeGenericDashboardSet(dashboardList)}
 }
 
 func NewDashboardSetFromList(dashboardList *settings_mesh_gloo_solo_io_v1.DashboardList) DashboardSet {
-	list := make([]*settings_mesh_gloo_solo_io_v1.Dashboard, 0, len(dashboardList.Items))
-	for idx := range dashboardList.Items {
-		list = append(list, &dashboardList.Items[idx])
-	}
-	return &dashboardSet{set: makeGenericDashboardSet(list)}
+    list := make([]*settings_mesh_gloo_solo_io_v1.Dashboard, 0, len(dashboardList.Items))
+    for idx := range dashboardList.Items {
+        list = append(list, &dashboardList.Items[idx])
+    }
+    return &dashboardSet{set: makeGenericDashboardSet(list)}
 }
 
 func (s *dashboardSet) Keys() sets.String {
 	if s == nil {
 		return sets.String{}
-	}
-	return s.Generic().Keys()
+    }
+    return s.Generic().Keys()
 }
 
-func (s *dashboardSet) List(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard {
-	if s == nil {
-		return nil
-	}
-	var genericFilters []func(ezkube.ResourceId) bool
-	for _, filter := range filterResource {
-		genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
-			return filter(obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
-		})
-	}
+func (s *dashboardSet) List(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard {
+    if s == nil {
+        return nil
+    }
+    var genericFilters []func(ezkube.ResourceId) bool
+    for _, filter := range filterResource {
+        genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
+            return filter(obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
+        })
+    }
 
-	objs := s.Generic().List(genericFilters...)
-	dashboardList := make([]*settings_mesh_gloo_solo_io_v1.Dashboard, 0, len(objs))
-	for _, obj := range objs {
-		dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
-	}
-	return dashboardList
+    objs := s.Generic().List(genericFilters...)
+    dashboardList := make([]*settings_mesh_gloo_solo_io_v1.Dashboard, 0, len(objs))
+    for _, obj := range objs {
+        dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
+    }
+    return dashboardList
 }
 
-func (s *dashboardSet) UnsortedList(filterResource ...func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard {
-	if s == nil {
-		return nil
-	}
-	var genericFilters []func(ezkube.ResourceId) bool
-	for _, filter := range filterResource {
-		genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
-			return filter(obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
-		})
-	}
+func (s *dashboardSet) UnsortedList(filterResource ... func(*settings_mesh_gloo_solo_io_v1.Dashboard) bool) []*settings_mesh_gloo_solo_io_v1.Dashboard {
+    if s == nil {
+        return nil
+    }
+    var genericFilters []func(ezkube.ResourceId) bool
+    for _, filter := range filterResource {
+        genericFilters = append(genericFilters, func(obj ezkube.ResourceId) bool {
+            return filter(obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
+        })
+    }
 
-	var dashboardList []*settings_mesh_gloo_solo_io_v1.Dashboard
-	for _, obj := range s.Generic().UnsortedList(genericFilters...) {
-		dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
-	}
-	return dashboardList
+    var dashboardList []*settings_mesh_gloo_solo_io_v1.Dashboard
+    for _, obj := range s.Generic().UnsortedList(genericFilters...) {
+        dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
+    }
+    return dashboardList
 }
 
 func (s *dashboardSet) Map() map[string]*settings_mesh_gloo_solo_io_v1.Dashboard {
-	if s == nil {
-		return nil
-	}
+    if s == nil {
+        return nil
+    }
 
-	newMap := map[string]*settings_mesh_gloo_solo_io_v1.Dashboard{}
-	for k, v := range s.Generic().Map() {
-		newMap[k] = v.(*settings_mesh_gloo_solo_io_v1.Dashboard)
-	}
-	return newMap
+    newMap := map[string]*settings_mesh_gloo_solo_io_v1.Dashboard{}
+    for k, v := range s.Generic().Map() {
+        newMap[k] = v.(*settings_mesh_gloo_solo_io_v1.Dashboard)
+    }
+    return newMap
 }
 
 func (s *dashboardSet) Insert(
-	dashboardList ...*settings_mesh_gloo_solo_io_v1.Dashboard,
+        dashboardList ...*settings_mesh_gloo_solo_io_v1.Dashboard,
 ) {
-	if s == nil {
-		panic("cannot insert into nil set")
-	}
+    if s == nil {
+        panic("cannot insert into nil set")
+    }
 
-	for _, obj := range dashboardList {
-		s.Generic().Insert(obj)
-	}
+    for _, obj := range dashboardList {
+        s.Generic().Insert(obj)
+    }
 }
 
 func (s *dashboardSet) Has(dashboard ezkube.ResourceId) bool {
-	if s == nil {
-		return false
-	}
-	return s.Generic().Has(dashboard)
+    if s == nil {
+        return false
+    }
+    return s.Generic().Has(dashboard)
 }
 
 func (s *dashboardSet) Equal(
-	dashboardSet DashboardSet,
+        dashboardSet DashboardSet,
 ) bool {
-	if s == nil {
-		return dashboardSet == nil
-	}
-	return s.Generic().Equal(dashboardSet.Generic())
+    if s == nil {
+        return dashboardSet == nil
+    }
+    return s.Generic().Equal(dashboardSet.Generic())
 }
 
 func (s *dashboardSet) Delete(Dashboard ezkube.ResourceId) {
-	if s == nil {
-		return
-	}
-	s.Generic().Delete(Dashboard)
+    if s == nil {
+        return
+    }
+    s.Generic().Delete(Dashboard)
 }
 
 func (s *dashboardSet) Union(set DashboardSet) DashboardSet {
-	if s == nil {
-		return set
-	}
-	return NewDashboardSet(append(s.List(), set.List()...)...)
+    if s == nil {
+        return set
+    }
+    return NewDashboardSet(append(s.List(), set.List()...)...)
 }
 
 func (s *dashboardSet) Difference(set DashboardSet) DashboardSet {
-	if s == nil {
-		return set
-	}
-	newSet := s.Generic().Difference(set.Generic())
-	return &dashboardSet{set: newSet}
+    if s == nil {
+        return set
+    }
+    newSet := s.Generic().Difference(set.Generic())
+    return &dashboardSet{set: newSet}
 }
 
 func (s *dashboardSet) Intersection(set DashboardSet) DashboardSet {
-	if s == nil {
-		return nil
-	}
-	newSet := s.Generic().Intersection(set.Generic())
-	var dashboardList []*settings_mesh_gloo_solo_io_v1.Dashboard
-	for _, obj := range newSet.List() {
-		dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
-	}
-	return NewDashboardSet(dashboardList...)
+    if s == nil {
+        return nil
+    }
+    newSet := s.Generic().Intersection(set.Generic())
+    var dashboardList []*settings_mesh_gloo_solo_io_v1.Dashboard
+    for _, obj := range newSet.List() {
+        dashboardList = append(dashboardList, obj.(*settings_mesh_gloo_solo_io_v1.Dashboard))
+    }
+    return NewDashboardSet(dashboardList...)
 }
 
+
 func (s *dashboardSet) Find(id ezkube.ResourceId) (*settings_mesh_gloo_solo_io_v1.Dashboard, error) {
-	if s == nil {
-		return nil, eris.Errorf("empty set, cannot find Dashboard %v", sksets.Key(id))
-	}
+    if s == nil {
+        return nil, eris.Errorf("empty set, cannot find Dashboard %v", sksets.Key(id))
+    }
 	obj, err := s.Generic().Find(&settings_mesh_gloo_solo_io_v1.Dashboard{}, id)
 	if err != nil {
 		return nil, err
-	}
+    }
 
-	return obj.(*settings_mesh_gloo_solo_io_v1.Dashboard), nil
+    return obj.(*settings_mesh_gloo_solo_io_v1.Dashboard), nil
 }
 
 func (s *dashboardSet) Length() int {
-	if s == nil {
-		return 0
-	}
-	return s.Generic().Length()
+    if s == nil {
+        return 0
+    }
+    return s.Generic().Length()
 }
 
 func (s *dashboardSet) Generic() sksets.ResourceSet {
-	if s == nil {
-		return nil
-	}
-	return s.set
+    if s == nil {
+        return nil
+    }
+    return s.set
 }
 
 func (s *dashboardSet) Delta(newSet DashboardSet) sksets.ResourceDelta {
-	if s == nil {
-		return sksets.ResourceDelta{
-			Inserted: newSet.Generic(),
-		}
-	}
-	return s.Generic().Delta(newSet.Generic())
+    if s == nil {
+        return sksets.ResourceDelta{
+            Inserted: newSet.Generic(),
+        }
+    }
+    return s.Generic().Delta(newSet.Generic())
 }

@@ -97,3 +97,97 @@ func (m *StringMatch) Equal(that interface{}) bool {
 
 	return true
 }
+
+// Equal function
+func (m *ObjectMeta) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*ObjectMeta)
+	if !ok {
+		that2, ok := that.(ObjectMeta)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if strings.Compare(m.GetName(), target.GetName()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetNamespace(), target.GetNamespace()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetClusterName(), target.GetClusterName()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetResourceVersion(), target.GetResourceVersion()) != 0 {
+		return false
+	}
+
+	if len(m.GetLabels()) != len(target.GetLabels()) {
+		return false
+	}
+	for k, v := range m.GetLabels() {
+
+		if strings.Compare(v, target.GetLabels()[k]) != 0 {
+			return false
+		}
+
+	}
+
+	if len(m.GetAnnotations()) != len(target.GetAnnotations()) {
+		return false
+	}
+	for k, v := range m.GetAnnotations() {
+
+		if strings.Compare(v, target.GetAnnotations()[k]) != 0 {
+			return false
+		}
+
+	}
+
+	return true
+}
+
+// Equal function
+func (m *TypeMeta) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*TypeMeta)
+	if !ok {
+		that2, ok := that.(TypeMeta)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if strings.Compare(m.GetKind(), target.GetKind()) != 0 {
+		return false
+	}
+
+	if strings.Compare(m.GetApiVersion(), target.GetApiVersion()) != 0 {
+		return false
+	}
+
+	return true
+}

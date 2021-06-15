@@ -5,13 +5,13 @@
 package v1beta1
 
 import (
-	bytes "bytes"
-	fmt "fmt"
-	math "math"
+    bytes "bytes"
+    fmt "fmt"
+    math "math"
 
-	jsonpb "github.com/golang/protobuf/jsonpb"
-	proto "github.com/golang/protobuf/proto"
-	skv2jsonpb "github.com/solo-io/skv2/pkg/kube_jsonpb"
+    skv2jsonpb "github.com/solo-io/skv2/pkg/kube_jsonpb"
+    jsonpb "github.com/golang/protobuf/jsonpb"
+    proto "github.com/golang/protobuf/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +20,7 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 var (
-	marshaller   = &skv2jsonpb.Marshaler{}
+	marshaller = &skv2jsonpb.Marshaler{}
 	unmarshaller = &jsonpb.Unmarshaler{}
 )
 
@@ -34,7 +34,6 @@ func (this *WasmDeploymentSpec) MarshalJSON() ([]byte, error) {
 func (this *WasmDeploymentSpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for WasmDeploymentStatus
 func (this *WasmDeploymentStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)
@@ -56,7 +55,6 @@ func (this *VirtualDestinationSpec) MarshalJSON() ([]byte, error) {
 func (this *VirtualDestinationSpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for VirtualDestinationStatus
 func (this *VirtualDestinationStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)
@@ -78,7 +76,6 @@ func (this *VirtualGatewaySpec) MarshalJSON() ([]byte, error) {
 func (this *VirtualGatewaySpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for VirtualGatewayStatus
 func (this *VirtualGatewayStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)
@@ -100,7 +97,6 @@ func (this *VirtualHostSpec) MarshalJSON() ([]byte, error) {
 func (this *VirtualHostSpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for VirtualHostStatus
 func (this *VirtualHostStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)
@@ -122,7 +118,6 @@ func (this *RouteTableSpec) MarshalJSON() ([]byte, error) {
 func (this *RouteTableSpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for RouteTableStatus
 func (this *RouteTableStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)
@@ -144,7 +139,6 @@ func (this *ServiceDependencySpec) MarshalJSON() ([]byte, error) {
 func (this *ServiceDependencySpec) UnmarshalJSON(b []byte) error {
 	return unmarshaller.Unmarshal(bytes.NewReader(b), this)
 }
-
 // MarshalJSON is a custom marshaler for ServiceDependencyStatus
 func (this *ServiceDependencyStatus) MarshalJSON() ([]byte, error) {
 	str, err := marshaller.MarshalToString(this)

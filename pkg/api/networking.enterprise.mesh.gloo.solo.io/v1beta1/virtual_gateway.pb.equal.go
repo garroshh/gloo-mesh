@@ -838,6 +838,16 @@ func (m *VirtualGatewaySpec_ConnectionHandler_HttpRoutes_HttpOptions) Equal(that
 		}
 	}
 
+	if h, ok := interface{}(m.GetRatelimitSettings()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetRatelimitSettings()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetRatelimitSettings(), target.GetRatelimitSettings()) {
+			return false
+		}
+	}
+
 	return true
 }
 

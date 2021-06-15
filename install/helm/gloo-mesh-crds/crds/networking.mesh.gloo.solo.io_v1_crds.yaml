@@ -507,6 +507,7 @@ spec:
                       type: object
                     ratelimit:
                       description: |-
+                        TODO: slows down cue
                         Partial config for GlooE rate-limiting based on Envoy's rate-limit service;
                         supports Envoy's rate-limit service API. (reference here: https://github.com/lyft/ratelimit#configuration)
                         Configure rate-limit *actions* here, which define how request characteristics get translated into

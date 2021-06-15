@@ -112,6 +112,21 @@ func (m *Ratelimit) Equal(that interface{}) bool {
 
 	switch m.RateLimitConfigType.(type) {
 
+	case *Ratelimit_Ratelimit:
+		if _, ok := target.RateLimitConfigType.(*Ratelimit_Ratelimit); !ok {
+			return false
+		}
+
+		if h, ok := interface{}(m.GetRatelimit()).(equality.Equalizer); ok {
+			if !h.Equal(target.GetRatelimit()) {
+				return false
+			}
+		} else {
+			if !proto.Equal(m.GetRatelimit(), target.GetRatelimit()) {
+				return false
+			}
+		}
+
 	case *Ratelimit_RateLimitConfigs:
 		if _, ok := target.RateLimitConfigType.(*Ratelimit_RateLimitConfigs); !ok {
 			return false
@@ -178,6 +193,70 @@ func (m *RatelimitConfig) Equal(that interface{}) bool {
 		}
 	} else {
 		if !proto.Equal(m.GetSetDescriptors(), target.GetSetDescriptors()) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Equal function
+func (m *RatelimitConfigComplete) Equal(that interface{}) bool {
+	if that == nil {
+		return m == nil
+	}
+
+	target, ok := that.(*RatelimitConfigComplete)
+	if !ok {
+		that2, ok := that.(RatelimitConfigComplete)
+		if ok {
+			target = &that2
+		} else {
+			return false
+		}
+	}
+	if target == nil {
+		return m == nil
+	} else if m == nil {
+		return false
+	}
+
+	if h, ok := interface{}(m.GetTypeMeta()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetTypeMeta()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetTypeMeta(), target.GetTypeMeta()) {
+			return false
+		}
+	}
+
+	if h, ok := interface{}(m.GetObjectMeta()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetObjectMeta()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetObjectMeta(), target.GetObjectMeta()) {
+			return false
+		}
+	}
+
+	if h, ok := interface{}(m.GetSpec()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetSpec()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetSpec(), target.GetSpec()) {
+			return false
+		}
+	}
+
+	if h, ok := interface{}(m.GetStatus()).(equality.Equalizer); ok {
+		if !h.Equal(target.GetStatus()) {
+			return false
+		}
+	} else {
+		if !proto.Equal(m.GetStatus(), target.GetStatus()) {
 			return false
 		}
 	}
@@ -517,6 +596,30 @@ func (m *RateLimitConfigSpec) Equal(that interface{}) bool {
 		return m == nil
 	} else if m == nil {
 		return false
+	}
+
+	switch m.ConfigType.(type) {
+
+	case *RateLimitConfigSpec_Raw_:
+		if _, ok := target.ConfigType.(*RateLimitConfigSpec_Raw_); !ok {
+			return false
+		}
+
+		if h, ok := interface{}(m.GetRaw()).(equality.Equalizer); ok {
+			if !h.Equal(target.GetRaw()) {
+				return false
+			}
+		} else {
+			if !proto.Equal(m.GetRaw(), target.GetRaw()) {
+				return false
+			}
+		}
+
+	default:
+		// m is nil but target is not nil
+		if m.ConfigType != target.ConfigType {
+			return false
+		}
 	}
 
 	return true
